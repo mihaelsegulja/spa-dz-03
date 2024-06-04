@@ -2,13 +2,13 @@
 #include "Scene.h"
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(800,500), "Window");
+	sf::RenderWindow window(sf::VideoMode(900,600), "Window");
 	window.setFramerateLimit(60);
 
 	Scene scene(&window);
 
-	Button button_start(&window, 0, 400, 100, 50, "Find", sf::Color::Blue);
-	Button button_rand(&window, 0, 450, 100, 50, "Random", sf::Color::Magenta);
+	Button button_start(&window, 0, 500, 100, 50, "Find", sf::Color(51, 51, 255));
+	Button button_rand(&window, 0, 550, 100, 50, "Rand", sf::Color(240, 120, 0));
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -17,10 +17,10 @@ int main() {
 				window.close();
 
 			if (event.type == sf::Event::MouseButtonPressed) {
-				if (event.mouseButton.button == sf::Mouse::Left) {
-					int mouseX = event.mouseButton.x;
-					int mouseY = event.mouseButton.y;
+				int mouseX = event.mouseButton.x;
+				int mouseY = event.mouseButton.y;
 
+				if (event.mouseButton.button == sf::Mouse::Left) {
 					button_start.handleClick(mouseX, mouseY, [&scene]() {
 						//std::cout << "Run clicked!" << std::endl;
 						scene.runDijkstra();
@@ -31,10 +31,11 @@ int main() {
 						scene.setRandomStartEnd();
 					});
 
-					scene.handleClick(mouseX, mouseY);
+					scene.handleLeftClick(mouseX, mouseY);
 				}
+
 				if (event.mouseButton.button == sf::Mouse::Right) {
-					//TODO: add function to handle setting start/end block
+					scene.handleRightClick(mouseX, mouseY);
 				}
 			}
 		}

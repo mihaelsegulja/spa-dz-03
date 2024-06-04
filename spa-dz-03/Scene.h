@@ -24,7 +24,8 @@ private:
 	
 public:
 	Scene(sf::RenderWindow* window);
-	void handleClick(int mouseX, int mouseY);
+	void handleLeftClick(int mouseX, int mouseY);
+	void handleRightClick(int mouseX, int mouseY);
 	void draw();
 	void setRandomStartEnd();
 	void runDijkstra();

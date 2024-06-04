@@ -1,9 +1,10 @@
 #include "Scene.h"
 
 const float INF = std::numeric_limits<float>::infinity();
-const int gridWidth = 40;
-const int gridHeight = 20; 
+const int gridWidth = 45;
+const int gridHeight = 25;
 const int gridSize = 20;
+bool settingStartBlock = true;
 
 Scene::Scene(sf::RenderWindow* window) {
     this->window = window;
@@ -23,10 +24,10 @@ Scene::Scene(sf::RenderWindow* window) {
         std::cout << "Can't load font!" << std::endl;
     }
     note.setFont(font);
-    note.setString("Set/Unset obstacles with left click.\nPress \"Random\" to randomize green and red positions.\nPress \"Find\" to find path from green to red.");
+    note.setString("Set/Unset obstacles with left click.\nSet start/end positions with right click.\nPress \"Rand\" to randomize start and end positions.\nPress \"Find\" to find path from start to end.");
     note.setCharacterSize(18);
     note.setFillColor(sf::Color::White);
-    note.setPosition(120, 410);
+    note.setPosition(120, 500);
 
     //start & end blocks
     srand(time(nullptr));
@@ -41,7 +42,7 @@ Scene::Scene(sf::RenderWindow* window) {
     createAdjList();
 }
 
-void Scene::handleClick(int mouseX, int mouseY) {
+void Scene::handleLeftClick(int mouseX, int mouseY) {
     //change color of cell
     for (int i = 0; i < grid.size(); i++) {
         if (grid[i].getGlobalBounds().contains(mouseX, mouseY)) {
@@ -50,6 +51,26 @@ void Scene::handleClick(int mouseX, int mouseY) {
             }
             else if (grid[i].getFillColor() == sf::Color::Black) {
                 grid[i].setFillColor(sf::Color::White);
+            }
+            break;
+        }
+    }
+}
+
+void Scene::handleRightClick(int mouseX, int mouseY) {
+    for (int i = 0; i < grid.size(); i++) {
+        if (grid[i].getGlobalBounds().contains(mouseX, mouseY)) {
+            if (grid[i].getFillColor() == sf::Color::White || grid[i].getFillColor() == sf::Color::Cyan) {
+                if (settingStartBlock) {
+                    startBlock.setPosition(grid[i].getPosition());
+                    startIndex = i;
+                    settingStartBlock = false;
+                }
+                else {
+                    endBlock.setPosition(grid[i].getPosition());
+                    endIndex = i;
+                    settingStartBlock = true;
+                }
             }
             break;
         }
@@ -143,7 +164,7 @@ void Scene::runDijkstra() {
 void Scene::visualizePath(const std::vector<int>& previous) {
     int v = endIndex;
     sf::Clock clock;
-    const float delay = 0.06f;
+    const float delay = 0.05f;
 
     while (v != -1) {
         grid[v].setFillColor(sf::Color::Cyan);
