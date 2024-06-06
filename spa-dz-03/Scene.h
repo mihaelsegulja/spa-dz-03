@@ -1,11 +1,11 @@
 #pragma once
-#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <limits>
 #include <queue>
-#include <SFML/Graphics.hpp>
+#include <sstream>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 class Scene
 {
@@ -21,13 +21,17 @@ private:
 	std::vector<std::vector<int>> adjList;
 	void createAdjList();
 	void visualizePath(const std::vector<int>& previous);
+	bool isDragging = false;
 	
 public:
 	Scene(sf::RenderWindow* window);
-	void handleLeftClick(int mouseX, int mouseY);
+	void handleMouseDrag(int mouseX, int mouseY);
 	void handleRightClick(int mouseX, int mouseY);
 	void draw();
 	void setRandomStartEnd();
 	void runDijkstra();
+	void handleMouseRelease();
+	void updateMouseDragState();
+	void clearGrid();
 };
 

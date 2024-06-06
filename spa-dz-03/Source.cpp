@@ -2,13 +2,18 @@
 #include "Scene.h"
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(900,600), "Window");
+	const int windowWidth = 900;
+	const int windowHeight = 650;
+	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Window");
 	window.setFramerateLimit(60);
 
 	Scene scene(&window);
 
-	Button button_start(&window, 0, 500, 100, 50, "Find", sf::Color(51, 51, 255));
-	Button button_rand(&window, 0, 550, 100, 50, "Rand", sf::Color(240, 120, 0));
+	const int buttonWidth = 100;
+	const int buttonHeight = 50;
+	Button button_start(&window, 0, 500, buttonWidth, buttonHeight, "Find", sf::Color(51, 51, 255));
+	Button button_rand(&window, 0, 550, buttonWidth, buttonHeight, "Rand", sf::Color(240, 120, 0));
+	Button button_clear(&window, 0, 600, buttonWidth, buttonHeight, "Clear", sf::Color(204, 0, 204));
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -22,21 +27,29 @@ int main() {
 
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					button_start.handleClick(mouseX, mouseY, [&scene]() {
-						//std::cout << "Run clicked!" << std::endl;
 						scene.runDijkstra();
 					});
 
 					button_rand.handleClick(mouseX, mouseY, [&scene]() {
-						//std::cout << "Random clicked!" << std::endl;
 						scene.setRandomStartEnd();
 					});
 
-					scene.handleLeftClick(mouseX, mouseY);
+					button_clear.handleClick(mouseX, mouseY, [&scene]() {
+						scene.clearGrid();
+					});
+
+					if (event.type == sf::Event::MouseButtonReleased) {
+						scene.handleMouseRelease();
+					}
 				}
 
 				if (event.mouseButton.button == sf::Mouse::Right) {
 					scene.handleRightClick(mouseX, mouseY);
 				}
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+				scene.updateMouseDragState();
 			}
 		}
 
@@ -44,6 +57,7 @@ int main() {
 		scene.draw();
 		button_start.draw();
 		button_rand.draw();
+		button_clear.draw();
 		window.display();
 	}
 

@@ -5,6 +5,7 @@ const int gridWidth = 45;
 const int gridHeight = 25;
 const int gridSize = 20;
 bool settingStartBlock = true;
+std::stringstream ss; 
 
 Scene::Scene(sf::RenderWindow* window) {
     this->window = window;
@@ -23,11 +24,16 @@ Scene::Scene(sf::RenderWindow* window) {
     if (!font.loadFromFile("BigBlueTermPlusNerdFont-Regular.ttf")) {
         std::cout << "Can't load font!" << std::endl;
     }
+    ss << "Set obstacles by pressing/holding left click." 
+        << "\nSet start/end positions with right click.\n"
+        << "\nPress \"Rand\" to randomize start and end positions."
+        << "\nPress \"Find\" to find path from start to end."
+        << "\nPress \"Clear\" to clear obstacles.";
     note.setFont(font);
-    note.setString("Set/Unset obstacles with left click.\nSet start/end positions with right click.\nPress \"Rand\" to randomize start and end positions.\nPress \"Find\" to find path from start to end.");
+    note.setString(ss.str());
     note.setCharacterSize(18);
     note.setFillColor(sf::Color::White);
-    note.setPosition(120, 500);
+    note.setPosition(120, 510);
 
     //start & end blocks
     srand(time(nullptr));
@@ -42,18 +48,33 @@ Scene::Scene(sf::RenderWindow* window) {
     createAdjList();
 }
 
-void Scene::handleLeftClick(int mouseX, int mouseY) {
-    //change color of cell
+void Scene::handleMouseDrag(int mouseX, int mouseY) {
     for (int i = 0; i < grid.size(); i++) {
         if (grid[i].getGlobalBounds().contains(mouseX, mouseY)) {
             if (grid[i].getFillColor() == sf::Color::White || grid[i].getFillColor() == sf::Color::Cyan) {
                 grid[i].setFillColor(sf::Color::Black);
             }
-            else if (grid[i].getFillColor() == sf::Color::Black) {
-                grid[i].setFillColor(sf::Color::White);
-            }
             break;
         }
+    }
+}
+
+void Scene::handleMouseRelease() {
+    isDragging = false;
+}
+
+void Scene::updateMouseDragState() {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        isDragging = true;
+        sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+        handleMouseDrag(mousePos.x, mousePos.y);
+    }
+}
+
+void Scene::clearGrid() {
+    for (int i = 0; i < grid.size(); i++) {
+        if (grid[i].getFillColor() == sf::Color::Black)
+            grid[i].setFillColor(sf::Color::White);
     }
 }
 
