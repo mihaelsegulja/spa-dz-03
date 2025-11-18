@@ -2,4 +2,4 @@
 
 An attempt to make an interactive visualization of Dijkstra's pathfinding algorithm using C++ and SFML.
 
-![dijkstra](https://github.com/user-attachments/assets/fe523971-7a7f-4dce-926c-266014e53594)
+![dijkstra](https://github.com/user-attachments/assets/f57a89a7-8766-4310-aefe-7e46edb84369)
